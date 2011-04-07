@@ -1,0 +1,14 @@
+.               .-.
+|               |  
+|.-.  .-.  .--.-|- 
+|   )(   ) |    |  
+'`-'  `-'`-'    '  
+
+
+This is barf, a conceptual mashup between woof and Apple's AirDrop but without
+much of the technical complication.
+
+
+This implementation is written Python.  Avahi is used to both share the current
+instance and discover others.  The HTTP server is a BaseHTTPServer subclass with
+a mixin to integrate it into the GLib main loop.
