@@ -35,7 +35,7 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
 
 class Server(GlibMixin, BaseHTTPServer.HTTPServer):
     def __init__(self):
-        BaseHTTPServer.HTTPServer.__init__(self, ("", 8080), Handler)
+        BaseHTTPServer.HTTPServer.__init__(self, ("", 0), Handler)
         self.files = {}
         self.counter = 0
 
@@ -44,9 +44,13 @@ class Server(GlibMixin, BaseHTTPServer.HTTPServer):
         self.files[self.counter] = filename
         return self.counter
 
+    def get_port(self):
+        return self.server_address[1]
+
 if __name__ == "__main__":
     import sys
     httpd = Server()
     httpd.start()
+    print "Running on port %d" % httpd.get_port()
     print httpd.add_file(sys.argv[1])
     gobject.MainLoop().run()
