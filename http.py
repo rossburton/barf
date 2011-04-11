@@ -45,7 +45,8 @@ class Server(GlibMixin, BaseHTTPServer.HTTPServer):
         return self.counter
 
 if __name__ == "__main__":
+    import sys
     httpd = Server()
     httpd.start()
-    print httpd.add_file("/home/ross/Mess/barf/barf.py")
+    print httpd.add_file(sys.argv[1])
     gobject.MainLoop().run()
