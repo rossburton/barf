@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import avahi, dbus, gobject
+import avahi, dbus, gobject, http
 from zeroconf import ZeroconfService
 
 from dbus.mainloop.glib import DBusGMainLoop
@@ -25,16 +25,9 @@ def publish():
     really.
     """
     
-    # TODO: do properly in http.py
-    import socket
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind(('localhost', 0))
-    addr, port = s.getsockname()
-    print "Got port %d" % port
-
-    # TODO: find a spare port when creating server, use that here
+    httpd = http.Server()
     zeroconf = ZeroconfService(name=get_service_name(),
-                               port=port,
+                               port=httpd.get_port(),
                                stype="_barf._tcp")
 
 
