@@ -6,10 +6,6 @@ from zeroconf import ZeroconfService
 from dbus.mainloop.glib import DBusGMainLoop
 loop = DBusGMainLoop(set_as_default=True)
 
-bus = dbus.SystemBus()
-avahi_daemon = dbus.Interface(bus.get_object(avahi.DBUS_NAME, avahi.DBUS_PATH_SERVER),
-                              avahi.DBUS_INTERFACE_SERVER)
-
 def get_service_name():
     """
     Get the mDNS service name for this barf instance, such as "ross on
@@ -41,6 +37,10 @@ def on_remove_service(interface, protocol, name, type, domain, flags):
     print "Lost %s" % name
 
 def search():
+    bus = dbus.SystemBus()
+    avahi_daemon = dbus.Interface(bus.get_object(avahi.DBUS_NAME, avahi.DBUS_PATH_SERVER),
+                                  avahi.DBUS_INTERFACE_SERVER)
+
     browser = dbus.Interface(bus.get_object(avahi.DBUS_NAME,
                                             avahi_daemon.ServiceBrowserNew(avahi.IF_UNSPEC, avahi.PROTO_UNSPEC, "_barf._tcp", "", dbus.UInt32(0))),
                              avahi.DBUS_INTERFACE_SERVICE_BROWSER)
