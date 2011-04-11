@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 import avahi, dbus, gobject
+from zeroconf import ZeroconfService
 
 from dbus.mainloop.glib import DBusGMainLoop
 loop = DBusGMainLoop(set_as_default=True)
@@ -24,21 +25,26 @@ def publish():
     really.
     """
     
-    group = dbus.Interface(bus.get_object(avahi.DBUS_NAME,
-                                          avahi_daemon.EntryGroupNew()),
-                           avahi.DBUS_INTERFACE_ENTRY_GROUP)
-    
-    # TODO: find an open port
-    group.AddService(avahi.IF_UNSPEC, avahi.PROTO_UNSPEC, dbus.UInt32(0),
-                     get_service_name(), "_barf._tcp", "", "",
-                     dbus.UInt16(2991), "")
-    group.Commit()
+    # TODO: do properly in http.py
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind(('localhost', 0))
+    addr, port = s.getsockname()
+    print "Got port %d" % port
+
+    # TODO: find a spare port when creating server, use that here
+    zeroconf = ZeroconfService(name=get_service_name(),
+                               port=port,
+                               stype="_barf._tcp")
 
 
 def on_new_service(interface, protocol, name, type, domain, flags):
+    if flags & avahi.LOOKUP_RESULT_OUR_OWN:
+        print "Ignoring %s" % name
+        return
     print "Found %s" % name
 
-def on_remove_service(interface, protocol, name, type, domain):
+def on_remove_service(interface, protocol, name, type, domain, flags):
     print "Lost %s" % name
 
 def search():
